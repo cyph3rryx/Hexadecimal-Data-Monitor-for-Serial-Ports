@@ -46,18 +46,18 @@ The following is the recommended procedure for using the code:
 To connect to a serial port at 9600 baud and display incoming data in hexadecimal format, use the following command:
 
 ```python
-python serial_data_hex_dump.py COM1 9600 hex
+python serialdatalogger.py COM1 9600 hex
 ```
 To filter out non-printable ASCII characters from the output, use the following command:
 
 ``` python
-python serial_data_hex_dump.py COM1 9600 hex none none printable
+python serialdatalogger.py COM1 9600 hex none none printable
 ```
 
 To log the incoming data to a file called log.txt, use the following command:
 
 ``` python
-python serial_data_hex_dump.py COM1 9600 hex file log.txt none
+python serialdatalogger.py COM1 9600 hex file log.txt none
 ```
 
 ## Conclusion
