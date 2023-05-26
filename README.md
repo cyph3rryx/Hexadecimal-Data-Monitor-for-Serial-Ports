@@ -2,7 +2,6 @@
 
 This code allows you to connect to a serial port and display incoming data in real-time. It also includes options to format, filter, and log the data.
 
-
 ## Code Description
 
 The code is written in Python and requires the `serial` and `sys` modules. It includes the following features:
