@@ -1,5 +1,7 @@
 import serial
 import sys
+import argparse
+import datetime
 
 # Added data format options
 FORMAT_HEX = 'hex'
@@ -65,39 +67,46 @@ def main():
     """
     Connect to a serial port and display incoming data in real-time
     """
-    # Check if the required number of command-line arguments are provided
-    if len(sys.argv) < 3:
-        print("Usage: python serial_reader.py <port> <baudrate> [data_format] [log_type] [log_file] [filter_type]")
-        return
+    parser = argparse.ArgumentParser(description='Serial Data Hex Dump')
+    parser.add_argument('port', help='serial port')
+    parser.add_argument('baudrate', type=int, help='baud rate')
+    parser.add_argument('--format', choices=[FORMAT_HEX, FORMAT_ASCII, FORMAT_BINARY], default=FORMAT_HEX,
+                        help='data format (default: hex)')
+    parser.add_argument('--log', choices=[LOG_NONE, LOG_FILE], default=LOG_NONE, help='log type (default: none)')
+    parser.add_argument('--logfile', help='log file name')
+    parser.add_argument('--filter', choices=[FILTER_NONE, FILTER_PRINTABLE], default=FILTER_NONE,
+                        help='filter type (default: none)')
 
-    port = sys.argv[1]
-    baudrate = int(sys.argv[2])
-    data_format = FORMAT_HEX if len(sys.argv) < 4 else sys.argv[3]
-    log_type = LOG_NONE if len(sys.argv) < 5 else sys.argv[4]
-    log_file = None if len(sys.argv) < 6 else sys.argv[5]
-    filter_type = FILTER_NONE if len(sys.argv) < 7 else sys.argv[6]
+    args = parser.parse_args()
 
-    ser = serial.Serial(port, baudrate)
+    ser = serial.Serial(args.port, args.baudrate, timeout=1)
 
     while True:
-        data = ser.read(1)
-        if data:
-            # Added support for multiple data formats
-            if data_format == FORMAT_HEX:
-                output = hexdump(data)
-            elif data_format == FORMAT_ASCII:
-                output = asciidump(data)
-            elif data_format == FORMAT_BINARY:
-                output = binarydump(data)
-            else:
-                raise ValueError('Invalid data format: {}'.format(data_format))
+        try:
+            data = ser.read(1)
+            if data:
+                # Added support for multiple data formats
+                if args.format == FORMAT_HEX:
+                    output = hexdump(data)
+                elif args.format == FORMAT_ASCII:
+                    output = asciidump(data)
+                elif args.format == FORMAT_BINARY:
+                    output = binarydump(data)
+                else:
+                    raise ValueError('Invalid data format: {}'.format(args.format))
 
-            # Added support for filtering and logging data
-            filtered_data = filterdata(data, filter_type)
-            logdata(filtered_data, log_type, log_file)
+                # Added support for filtering and logging data
+                filtered_data = filterdata(data, args.filter)
+                logdata(filtered_data, args.log, args.logfile)
 
-            sys.stdout.write(output)
-            sys.stdout.flush()
+                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                sys.stdout.write(f'[{timestamp}] {output}\n')
+                sys.stdout.flush()
+
+        except (serial.SerialException, ValueError) as e:
+            sys.stderr.write(f'Error: {str(e)}\n')
+            sys.stderr.flush()
+            # Optionally, you can attempt to reconnect to the serial port here
 
 
 if __name__ == '__main__':
