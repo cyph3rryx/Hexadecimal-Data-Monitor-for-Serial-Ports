@@ -14,11 +14,13 @@ LOG_FILE = 'file'
 FILTER_NONE = 'none'
 FILTER_PRINTABLE = 'printable'
 
+
 def hexdump(data):
     """
     Convert binary data to a hexadecimal string representation
     """
     return ' '.join('{:02X}'.format(byte) for byte in data)
+
 
 def asciidump(data):
     """
@@ -26,11 +28,13 @@ def asciidump(data):
     """
     return ''.join(chr(byte) if 32 <= byte <= 126 else '.' for byte in data)
 
+
 def binarydump(data):
     """
     Convert binary data to a binary string representation
     """
     return ''.join('{:08b}'.format(byte) for byte in data)
+
 
 def filterdata(data, filter_type):
     """
@@ -42,6 +46,7 @@ def filterdata(data, filter_type):
         return bytearray(byte for byte in data if 32 <= byte <= 126)
     else:
         raise ValueError('Invalid filter type: {}'.format(filter_type))
+
 
 def logdata(data, log_type, log_file):
     """
@@ -55,11 +60,16 @@ def logdata(data, log_type, log_file):
     else:
         raise ValueError('Invalid log type: {}'.format(log_type))
 
+
 def main():
     """
     Connect to a serial port and display incoming data in real-time
     """
-    # Added command-line arguments and options
+    # Check if the required number of command-line arguments are provided
+    if len(sys.argv) < 3:
+        print("Usage: python serial_reader.py <port> <baudrate> [data_format] [log_type] [log_file] [filter_type]")
+        return
+
     port = sys.argv[1]
     baudrate = int(sys.argv[2])
     data_format = FORMAT_HEX if len(sys.argv) < 4 else sys.argv[3]
@@ -88,6 +98,7 @@ def main():
 
             sys.stdout.write(output)
             sys.stdout.flush()
+
 
 if __name__ == '__main__':
     main()
