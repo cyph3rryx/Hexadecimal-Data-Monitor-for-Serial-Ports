@@ -60,5 +60,4 @@ python serialdatalogger.py COM1 9600 hex file log.txt none
 ```
 
 ## Summarizing 
-
 The serial data hex dump code provides a flexible and customizable tool for digital forensics investigators to extract and analyze data from devices that communicate via a serial port. By using the various formatting, filtering, and logging options, investigators can obtain valuable information that can aid in their investigations.
