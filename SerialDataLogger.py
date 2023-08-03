@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 
 # Set up the logger
 logging.basicConfig(filename='memory_analysis.log', level=logging.INFO)
-
 def run_cmd(command):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
