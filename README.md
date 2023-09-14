@@ -1,6 +1,6 @@
 # Serial Data Hex Dump
 
-This code allows you to connect to a serial port and display incoming data in real-time. It also includes options to format, filter, and log the data.
+This code allows you to connect to a serial port and display incoming data in real time. It also includes options to format, filter, and log the data.
 
 ## Code Description
 
