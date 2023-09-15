@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 # Set up the logger
 logging.basicConfig(filename='memory_analysis.log', level=logging.INFO)
+
 def run_cmd(command):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -26,8 +27,7 @@ def run_volatility(file_path, command):
     return run_cmd(vol_command)
 
 def file_analysis(file_path):
-    # Use actual command instead of 'file_analysis_tool'
-    analysis_tool_command = f'cat {file_path}'  # Replace 'cat' with your actual command
+    analysis_tool_command = f'cat {file_path}'  
     return run_cmd(analysis_tool_command)
 
 def calculate_hash(file_path):
@@ -41,69 +41,41 @@ def calculate_hash(file_path):
         return None
 
 def anomaly_detection(data):
-    # Convert data to list of numbers if data is string
     if isinstance(data, str):
         data = [float(item) for item in data.split() if item.isdigit()]
-
-    # Here we are just using a simple example of finding values that are more than 2 standard deviations from the mean
     mean = np.mean(data)
     std_dev = np.std(data)
     anomalies = [x for x in data if abs(x - mean) > 2 * std_dev]
-
     return anomalies
 
 def timeline_analysis(events):
-    # Assume events is a string of "timestamp,data" per line
     if isinstance(events, str):
         events = [dict(zip(['timestamp', 'data'], line.split(','))) for line in events.splitlines()]
-
-    # Here we are just plotting the data over time
     timestamps = [datetime.strptime(event['timestamp'], '%Y-%m-%d %H:%M:%S') for event in events]
     data = [float(event['data']) for event in events]
-
     plt.plot(timestamps, data)
     plt.show()
 
 def study_page_file():
-    # Here we are just reading the page file and printing its contents
-    # You will need to replace this with your actual logic for studying the page file
     with open('/path/to/pagefile.sys', 'rb') as f:
         contents = f.read()
         print(contents)
 
 def main():
     print('Press "q" to quit at any time')
-
     while True:
         print('1. RAM Dump and Analysis')
         print('2. Study Page File')
         choice = input('Enter your choice: ')
-
         if choice == '1':
             print('Initiating RAM Dump and Analysis...')
             file_path = 'memory_dump.bin'
-
-            output = run_volatility(file_path, 'info')
-
-            if output:
-                print(f"Output: {output}")
-
-                hash_value = calculate_hash(file_path)
-                if hash_value:
-                    print(f"Hash Value: {hash_value}")
-                else:
-                    print("Error calculating hash value")
-
-            analysis_output = file_analysis(file_path)
-            if analysis_output:
-                print(f"File Analysis output: {analysis_output}")
-
-            print(f"Anomaly detection results: {anomaly_detection(output)}")
-            print(f"Timeline analysis result: {timeline_analysis(output)}")
-
+            print(f"Output: {run_volatility(file_path, 'evtlogs')}")
+            print(f"Output: {run_volatility(file_path, 'vaddump')}")
+            print(f"Output: {run_volatility(file_path, 'printkey -K \"Microsoft\\Security Center\\Svc\"')}")
+            print(f"Output: {run_volatility(file_path, 'dlldump -D dlls/')}")
         elif choice == '2':
             study_page_file()
-
         elif choice.lower() == 'q':
             break
 
